@@ -3,31 +3,196 @@
 @tailwind utilities;
 
 :root {
+  --primary: #274494;
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  text-transform: uppercase;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
   }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  -webkit-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+
+.checkbox {
+  --background: #fff;
+  --border: rgb(209 213 219);
+  --border-hover: rgb(107 114 128);
+  --border-active: rgb(107 114 128);
+  --tick: #fff;
+  position: relative;
+  input,
+  svg {
+    width: 32px;
+    height: 32px;
+    display: block;
+  }
+  input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+    outline: none;
+    background: var(--background);
+    border: none;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 0px;
+    transition: box-shadow 0.33s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 0 0 var(--s, 1px) var(--b, var(--border));
+    &:hover {
+      --s: 2px;
+      --b: var(--border-hover);
+    }
+    &:checked {
+      --b: var(--border-active);
+    }
+  }
+  svg {
+    pointer-events: none;
+    fill: none;
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke: var(--stroke, var(--border-active));
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    transform: scale(var(--scale, 1)) translateZ(0);
+  }
+
+  &.bounce {
+    --stroke: var(--tick);
+    input {
+      &:checked {
+        --s: 16px;
+        & + svg {
+          animation: bounce 0.4s linear forwards 0.2s;
+        }
+      }
+    }
+    svg {
+      --scale: 0;
+    }
+  }
+}
+
+@keyframes bounce {
+  50% {
+    transform: scale(1.2);
+  }
+  75% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ? ******************************************** Buttons ****************************************/
+.btn-primary {
+  @apply flex items-center justify-center w-full max-w-[500px] h-11 text-center font-bold text-[13px] text-gray-200 bg-gray-500 bg-opacity-95 border-t-4 border-gray-300 border-opacity-75 hover:bg-opacity-85 hover:border-opacity-100 focus:bg-opacity-85 focus:border-opacity-100 focus-visible:bg-opacity-75 outline-none tracking-[1.2px] disabled:pointer-events-none disabled:opacity-60 transition-[background-color] duration-[.33s] cursor-pointer uppercase;
+}
+
+.btn-primary-text {
+  @apply group-focus:text-white transition-colors duration-[.33s];
+}
+
+.btn-secondary {
+  @apply flex items-center justify-center w-full max-w-[500px] h-11 text-center font-bold text-[13px] text-gray-600 bg-inherit border border-gray-300 hover:text-gray-700 hover:border-gray-500 active:text-gray-800 focus:bg-gray-200 focus:bg-opacity-70 focus:border-gray-600 focus-visible:bg-opacity-45 focus:text-gray-800 group-aria-disabled:pointer-events-none group-aria-disabled:opacity-60 outline-none tracking-[1.2px] select-none transition-all duration-[.33s];
+}
+
+.btn-danger {
+  @apply uppercase flex items-center justify-center w-full max-w-[500px] h-11 text-center font-bold text-[13px] text-white bg-red-600 hover:bg-red-700 active:bg-red-800 focus-visible:bg-opacity-60 outline-none tracking-[1.2px] transition-all duration-300;
+}
+
+.btn-remove-item {
+  /* @apply uppercase tracking-[1.2px] z-10 border-b border-black hover:text-gray-500 hover:border-b-2 hover:border-gray-500 hover:opacity-85 transition-all duration-500; */
+  @apply uppercase font-normal text-[13px] leading-[24px] tracking-[1.8px] z-10 text-gray-700 shadow-[0px_1px_0px_0px_currentColor] hover:shadow-[0px_2px_0px_0px_currentColor] hover:text-gray-500 hover:opacity-85 active:text-black active:opacity-[unset];
+  transition: box-shadow 0.33s cubic-bezier(0.5, 0, 0, 0.75), color 0.33s ease,
+    opacity 0.33s ease;
+}
+
+/* ? ******************************************** Inputs ****************************************/
+.input-primary {
+  @apply w-full h-[46px] py-[10px] px-3 mt-2 text-gray-600 font-medium text-[13px] leading-[26px] tracking-[1.8px] border border-solid border-gray-300 outline-none focus:border-gray-600 transition-all duration-500 uppercase;
+}
+
+.input-primary.error {
+  @apply border-red-500 focus:border-gray-600;
+}
+
+.input-label {
+  @apply font-medium text-[13px] leading-[26px] tracking-[1.8px] text-gray-500 group-has-[:focus]:text-black transition-all duration-[.33s];
+}
+
+.input-error-alert-auth {
+  @apply mt-2 text-[13px] text-red-500 font-medium leading-[26px] tracking-[1.8px];
+}
+
+.input-error-alert-address {
+  @apply mt-2 text-[11px] text-red-500 font-medium leading-[26px] tracking-[1.8px];
+}
+
+.input-error-alert-product {
+  @apply mt-2 text-[11px] text-red-500 font-medium leading-[26px] tracking-[1.8px];
+}
+
+.input-primary__textarea {
+  @apply w-full min-h-[46px] max-h-[184px] h-[92px] py-[10px] px-3 mt-2 text-gray-600 font-medium text-[13px] leading-[26px] tracking-[1.8px] border border-gray-300 outline-none focus:border-gray-600 transition-colors duration-500 uppercase;
+}
+
+.input-primary__textarea.error {
+  @apply border-red-500 focus:border-gray-600;
+}
+
+/* ? ******************************************** Other ****************************************/
+@media (width < 960px) {
+  .mobile-checkout-btn-container {
+    @apply fixed bottom-0 left-0 flex justify-center w-full h-auto max-h-[calc(100vh-56px)] shadow-[0px_-2px_10px_0px_rgba(0,0,0,0.1)] px-4 py-5 bg-gray-200 z-20 overflow-scroll;
+  }
+}
+
+.out-of-stock-label {
+  @apply absolute bg-[rgba(57,60,65,.5)] px-1 py-2 sm:px-2 font-normal w-auto select-none text-white text-[9px] sm:text-[11px] xl:text-[13px] leading-[16px] sm:leading-[22px] xl:leading-[26px] tracking-[1.8px] backdrop-blur-[2px];
+}
+
+.out-of-stock-label-slides {
+  @apply absolute bg-[rgba(0,0,0,.55)] p-2 font-normal w-full sm:w-auto select-none text-center text-white text-[13px] leading-[26px] tracking-[1.8px] backdrop-blur-[2px];
+}
+
+.footer-list {
+  @apply flex flex-col min-[600px]:flex-row flex-nowrap min-[600px]:flex-wrap justify-center items-center text-[12.5px] leading-[20px] tracking-[1.8px];
+}
+
+.footer-item {
+  @apply py-1 mb-2 min-[600px]:py-2 min-[600px]:mb-0 min-[600px]:mr-[14px] last:mr-0 text-gray-800 hover:text-gray-500 active:text-black transition-colors duration-[.33s] cursor-pointer select-none;
 }

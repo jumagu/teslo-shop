@@ -1,0 +1,78 @@
+.swiper-slide {
+  display: flex;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.swiper-slide {
+  background-size: cover;
+  background-position: center;
+}
+
+.mySwiper {
+  height: 20%;
+  box-sizing: border-box;
+  padding: 10px 0;
+}
+
+.mySwiper .swiper-slide {
+  width: 25%;
+  height: 100%;
+  opacity: 0.4;
+}
+
+.mySwiper .swiper-slide-thumb-active {
+  opacity: 1;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ? *************************************** Pagination **************************************/
+.swiper-pagination-bullet {
+  border-radius: 0;
+}
+
+@media (min-width: 960px) {
+  .swiper-pagination-bullets {
+    margin-bottom: 32px;
+  }
+
+  .swiper-pagination-bullets {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .mySwiper2:hover .swiper-pagination-bullets {
+    opacity: 1;
+  }
+}
+
+/* ? *************************************** Navigation **************************************/
+.swiper-button-next,
+.swiper-button-prev {
+  @apply bg-gray-500 w-10 h-10 bg-opacity-60 opacity-0;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  @apply font-extrabold;
+}
+
+.swiper-button-disabled {
+  @apply hidden;
+}
+
+.mySwiper2:hover .swiper-button-prev,
+.mySwiper2:hover .swiper-button-next {
+  opacity: 1;
+}

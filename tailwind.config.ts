@@ -6,7 +6,18 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+
   theme: {
+    screens: {
+      xs: "432px",
+      sm: "640px",
+      md: "768px",
+      xm: "960px",
+      lg: "1024px",
+      mlg: "1200px",
+      xl: "1280px",
+      "2xl": "1536px",
+    },
     extend: {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -17,4 +28,5 @@ const config: Config = {
   },
   plugins: [],
 };
+
 export default config;
