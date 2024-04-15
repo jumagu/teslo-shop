@@ -12,7 +12,6 @@ export * from "./products/products-grid/ProductGridItem";
 
 export * from "./ui/title/Title";
 export * from "./ui/footer/Footer";
-export * from "./ui/loaders/Loader";
 export * from "./ui/top-menu/TopMenu";
 export * from "./ui/side-bar/SideBar";
 export * from "./ui/not-found/NotFound";

@@ -12,7 +12,7 @@ import {
   useForm,
 } from "react-hook-form";
 
-import { ButtonPrimary, Loader } from "@/components";
+import { ButtonPrimary } from "@/components";
 import type { Address, Country } from "@/interfaces";
 import { useAddressStore, useCartStore } from "@/store";
 import { deleteUserAddress, setUserAddress } from "@/actions";
@@ -79,10 +79,7 @@ export const AddressFrom = ({ countries, userStoredAddress = {} }: Props) => {
     setLoaded(true);
   }, []);
 
-  if (!loaded)
-    return (
-      <Loader className="h-[calc(100vh-163px)] min-[600px]:h-[calc(100vh-159px)]" />
-    );
+  if (!loaded) return <></>;
 
   return (
     <>

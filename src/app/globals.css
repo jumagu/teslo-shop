@@ -135,7 +135,6 @@ body {
 }
 
 .btn-remove-item {
-  /* @apply uppercase tracking-[1.2px] z-10 border-b border-black hover:text-gray-500 hover:border-b-2 hover:border-gray-500 hover:opacity-85 transition-all duration-500; */
   @apply uppercase font-normal text-[13px] leading-[24px] tracking-[1.8px] z-10 text-gray-700 shadow-[0px_1px_0px_0px_currentColor] hover:shadow-[0px_2px_0px_0px_currentColor] hover:text-gray-500 hover:opacity-85 active:text-black active:opacity-[unset];
   transition: box-shadow 0.33s cubic-bezier(0.5, 0, 0, 0.75), color 0.33s ease,
     opacity 0.33s ease;
@@ -177,7 +176,7 @@ body {
 /* ? ******************************************** Other ****************************************/
 @media (width < 960px) {
   .mobile-checkout-btn-container {
-    @apply fixed bottom-0 left-0 flex justify-center w-full h-auto max-h-[calc(100vh-56px)] shadow-[0px_-2px_10px_0px_rgba(0,0,0,0.1)] px-4 py-5 bg-gray-200 z-20 overflow-scroll;
+    @apply fixed bottom-0 left-0 right-0 flex justify-center w-full h-auto max-h-screen shadow-[0px_-2px_10px_0px_rgba(0,0,0,0.1)] px-4 py-5 bg-gray-200 z-40 overflow-scroll;
   }
 }
 

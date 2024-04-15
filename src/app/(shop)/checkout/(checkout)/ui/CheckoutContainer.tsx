@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 
 import { useAddressStore, useCartStore } from "@/store";
 
-import { Loader } from "@/components";
-
 import { PlaceOrder } from "./PlaceOrder";
 import { ProductsToOrder } from "./ProductsToOrder";
 
@@ -19,10 +17,7 @@ export const CheckoutContainer = () => {
     setLoaded(true);
   }, []);
 
-  if (!loaded)
-    return (
-      <Loader className="h-[calc(100vh-241px)] min-[600px]:h-[calc(100vh-209px)]" />
-    );
+  if (!loaded) return <></>;
 
   return (
     <>

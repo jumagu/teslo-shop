@@ -32,13 +32,13 @@ export const SideBar = () => {
     <div>
       {/* Background black */}
       {isSideBarMenuOpen && (
-        <div className="fixed top-0 left-0 w-screen h-screen z-40 bg-black opacity-30 transition-all duration-300"></div>
+        <div className="fixed top-0 left-0 w-screen h-screen z-50 bg-black opacity-30 transition-all duration-300"></div>
       )}
 
       {/* Blur */}
       {isSideBarMenuOpen && (
         <div
-          className="fade-in fixed top-0 left-0 w-screen h-screen z-40 backdrop-filter backdrop-blur-sm transition-all duration-300"
+          className="fade-in fixed top-0 left-0 w-screen h-screen z-50 backdrop-filter backdrop-blur-sm transition-all duration-300"
           onClick={closeSideBarMenu}
         ></div>
       )}
@@ -46,12 +46,12 @@ export const SideBar = () => {
       {/* SideBarMenu */}
       <div
         className={clsx(
-          "fixed px-8 right-0 top-0 w-[414px] max-w-[calc(100vw-48px)] h-screen bg-white z-40 transform transition-all duration-300",
+          "fixed px-8 right-0 top-0 w-[414px] max-w-[calc(100vw-48px)] h-screen bg-white z-50 transform transition-all duration-300 overflow-y-auto",
           { "translate-x-full": !isSideBarMenuOpen }
         )}
       >
         {/* Close Button */}
-        <div className="flex flex-row-reverse mt-4 mb-6">
+        <div className="flex flex-row-reverse mt-4 mb-6 sticky bg-white top-0 z-10">
           <button className="hover:bg-gray-100 transition-all duration-300">
             <IoCloseOutline
               className="text-gray-500"

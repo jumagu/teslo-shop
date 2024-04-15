@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 
 import { useCartStore } from "@/store";
 
-import { Loader } from "@/components";
-
 import { EmptyCart } from "./EmptyCart";
 import { FilledCart } from "./FilledCart";
 
@@ -18,10 +16,7 @@ export const CartContainer = () => {
     setLoaded(true);
   }, []);
 
-  if (!loaded)
-    return (
-      <Loader className="h-[calc(100vh-208px)] min-[600px]:h-[calc(100vh-167px)]" />
-    );
+  if (!loaded) return <></>;
 
   return <>{totalItemsInCart < 1 ? <EmptyCart /> : <FilledCart />}</>;
 };
