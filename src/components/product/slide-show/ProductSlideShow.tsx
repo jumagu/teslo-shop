@@ -54,12 +54,15 @@ export const ProductSlideShow = ({ title, images, inStockLabel }: Props) => {
             "--swiper-pagination-color": "#5c5e62",
           } as React.CSSProperties
         }
+        spaceBetween={0}
         navigation={navigation}
         pagination={pagination}
         autoplay={{ delay: 5000 }}
         thumbs={{ swiper: thumbsSwiper }}
         modules={[FreeMode, Navigation, Pagination, Thumbs, Autoplay]}
-        breakpoints={{ 960: { navigation: { enabled: true } } }}
+        breakpoints={{
+          960: { navigation: { enabled: true }, spaceBetween: 1 },
+        }}
         className="mySwiper2"
       >
         {images.map((image) => (
