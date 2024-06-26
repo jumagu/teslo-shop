@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { IoCartOutline, IoSearchOutline } from "react-icons/io5";
+import { IoCartOutline } from "react-icons/io5";
 
 import { teslaFont } from "@/config/fonts.config";
 import { useCartStore, useUiStore } from "@/store";
 import clsx from "clsx";
+import { Search } from "../search/Search";
 
 interface Props {
   isOnAuth?: boolean;
@@ -27,7 +28,7 @@ export const TopMenu = ({ isOnAuth = false }: Props) => {
   return (
     <header className="flex h-14 justify-between items-center bg-white w-full sticky top-0 z-30">
       <h1
-        className={clsx("flex items-center", {
+        className={clsx("flex items-center justify-start basis-0 grow", {
           "pl-[2px]": !isOnAuth,
           "pl-[10px] min-[600px]:pl-[22px] mlg:pl-[34px]": isOnAuth,
         })}
@@ -62,7 +63,7 @@ export const TopMenu = ({ isOnAuth = false }: Props) => {
         <></>
       ) : (
         <>
-          <nav className="hidden mlg:block">
+          <nav className="hidden mlg:flex basis-0 grow justify-center px-12">
             <ol className="flex">
               <li role="none">
                 <div className="py-1 px-2 hover:bg-gray-100 transition-all duration-[.33s]">
@@ -99,9 +100,9 @@ export const TopMenu = ({ isOnAuth = false }: Props) => {
             </ol>
           </nav>
 
-          <ol className="flex items-center pr-4">
+          <ol className="flex items-center justify-end pr-4 basis-0 grow">
             <div className="mr-2 hidden mlg:block">
-              <IoSearchOutline size={22} />
+              <Search />
             </div>
 
             <div className="ml-1">

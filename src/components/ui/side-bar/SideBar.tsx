@@ -8,10 +8,11 @@ import { useSession } from "next-auth/react";
 
 import clsx from "clsx";
 
-import { IoCloseOutline, IoSearchOutline } from "react-icons/io5";
+import { IoCloseOutline } from "react-icons/io5";
 
 import { logout } from "@/actions";
 import { useUiStore } from "@/store";
+import { Search } from "../search/Search";
 
 export const SideBar = () => {
   const isSideBarMenuOpen = useUiStore((state) => state.isSideBarMenuOpen);
@@ -62,20 +63,8 @@ export const SideBar = () => {
         </div>
 
         {/* Search Input */}
-        <div className="relative mb-2 mlg:hidden">
-          <IoSearchOutline
-            className="absolute top-[9px] left-3 text-gray-500"
-            size={22}
-          />
-          <input
-            className="w-full h-[40px] bg-gray-50 px-10 py-1 font-medium text-[12px] leading-[24px] border border-gray-300 outline-none focus:border-gray-600 transition-all duration-500 uppercase"
-            type="text"
-            placeholder="Search"
-          />
-          <IoCloseOutline
-            className="absolute top-[10px] right-2 text-gray-500 hover:bg-gray-200 cursor-pointer transition-all duration-300"
-            size={19}
-          />
+        <div className="mb-2 mlg:hidden">
+          <Search isOnSideBar />
         </div>
 
         {/* Navigation list */}
