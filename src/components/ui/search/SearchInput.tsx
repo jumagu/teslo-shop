@@ -7,6 +7,8 @@ import clsx from "clsx";
 import { IoIosSearch } from "react-icons/io";
 import { CloseIcon } from "../icons/CloseIcon";
 
+import { useUiStore } from "@/store";
+
 interface Props {
   value: string;
   setValue: (value: string) => void;
@@ -23,6 +25,8 @@ export const SearchInput = ({
 }: Props) => {
   const router = useRouter();
 
+  const closeSideBarMenu = useUiStore((state) => state.closeSideBarMenu);
+
   const [touched, setTouched] = useState(false);
   const [focused, setFocused] = useState(false);
   const [inputOpen, setInputOpen] = useState(false);
@@ -32,6 +36,10 @@ export const SearchInput = ({
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       router.push(`/search?searchTerm=${value}`);
+
+      if (isOnSideBar) {
+        closeSideBarMenu();
+      }
     }
   };
 
@@ -46,7 +54,6 @@ export const SearchInput = ({
     setSuggestionsVisivility(true);
   };
 
-  // ? siempre que entra a esta función, el inputOpen = true
   const handleInputBlur = () => {
     setFocused(false);
 
