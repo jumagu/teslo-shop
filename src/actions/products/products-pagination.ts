@@ -7,12 +7,14 @@ interface PaginationOptions {
   page?: number;
   take?: number;
   gender?: Gender;
+  query?: string;
 }
 
 export const getPaginatedProductsWithImages = async ({
   page = 1,
   take = 12,
   gender,
+  query,
 }: PaginationOptions) => {
   if (
     gender &&
@@ -27,21 +29,22 @@ export const getPaginatedProductsWithImages = async ({
   if (page < 1) page = 1;
 
   try {
-    const products = await prisma.product.findMany({
-      take,
-      skip: (page - 1) * take,
-      include: {
-        ProductImage: { take: 2, select: { url: true } },
-      },
-      where: { gender },
-      orderBy: {
-        gender: "asc",
-      },
-    });
-
-    if (!products) return null;
-
-    const productsCount = await prisma.product.count({ where: { gender } });
+    const [products, productsCount] = await Promise.all([
+      prisma.product.findMany({
+        take,
+        skip: (page - 1) * take,
+        include: {
+          ProductImage: { take: 2, select: { url: true } },
+        },
+        where: { gender, title: { contains: query, mode: "insensitive" } },
+        orderBy: {
+          gender: "asc",
+        },
+      }),
+      prisma.product.count({
+        where: { gender, title: { contains: query, mode: "insensitive" } },
+      }),
+    ]);
 
     const totalPages = Math.ceil(productsCount / take);
 
@@ -54,6 +57,6 @@ export const getPaginatedProductsWithImages = async ({
       })),
     };
   } catch (error) {
-    throw new Error("An error occurred when loading products.");
+    throw new Error("An error occurred when querying products.");
   }
 };
