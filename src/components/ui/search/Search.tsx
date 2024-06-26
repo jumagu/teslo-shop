@@ -39,6 +39,7 @@ export const Search = ({ isOnSideBar }: Props) => {
       <SearchSuggestions
         visible={suggestionsVisivility}
         suggesterItems={suggesterItems}
+        isOnSideBar={isOnSideBar}
       />
     </div>
   );
