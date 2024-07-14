@@ -2,7 +2,7 @@ import { auth } from "@/auth.config";
 import { Title } from "@/components";
 import { getCountries, getUserAddress } from "@/actions";
 
-import { AddressFrom } from "./ui/AddressFrom";
+import { AddressForm } from "./ui/AddressForm";
 
 export const metadata = {
   title: "Checkout",
@@ -25,7 +25,7 @@ export default async function AddressPage() {
           className="text-[18px] pb-2 xm:pt-8 tracking-[0.8px]"
         />
 
-        <AddressFrom
+        <AddressForm
           countries={countries}
           userStoredAddress={userStoredAddress}
         />

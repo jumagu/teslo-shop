@@ -38,7 +38,7 @@ const mobilePhoneNumberPattern: ValidationRule = new RegExp(
   "^\\+(?:[0-9] ?){6,14}[0-9]$"
 );
 
-export const AddressFrom = ({ countries, userStoredAddress = {} }: Props) => {
+export const AddressForm = ({ countries, userStoredAddress = {} }: Props) => {
   const [loaded, setLoaded] = useState(false);
 
   const router = useRouter();
