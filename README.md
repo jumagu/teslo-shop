@@ -1,4 +1,6 @@
-# Getting Started
+# Teslo Shop
+
+This project was developed in a course I took called "Next.js: the react framework for production" (original title: "Next.js: el framework de react para producción") on Udemy. However, I improved 99% of the visual interface and adapted it to the design of the official Tesla store, since the design of the course project was pretty bad. In addition, I added new features the course project does not have, such as the search page and search bar.
 
 ## Development
 
