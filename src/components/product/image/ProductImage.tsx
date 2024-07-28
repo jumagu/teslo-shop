@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { shimmer, toBase64 } from "@/utils";
+
 interface Props {
   src?: string;
   alt: string;
@@ -32,7 +34,9 @@ export const ProductImage = ({
       width={width}
       height={height}
       alt={alt}
-      placeholder="blur"
+      placeholder={`data:image/svg+xml;base64,${toBase64(
+        shimmer(width, height)
+      )}`}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     />
