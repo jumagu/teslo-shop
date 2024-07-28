@@ -32,6 +32,7 @@ export const ProductImage = ({
       width={width}
       height={height}
       alt={alt}
+      placeholder="blur"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     />
