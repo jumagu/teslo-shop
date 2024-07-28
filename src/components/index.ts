@@ -20,6 +20,7 @@ export * from "./ui/paignation/Pagination";
 export * from "./ui/button/ButtonSecondary";
 export * from "./ui/button/ButtonLinkPrimary";
 export * from "./ui/error-message/ErrorMessage";
+export * from "./ui/skeleton/ProductGridSkeleton";
 
 export * from "./providers/AuthProvider";
 export * from "./providers/PayPalProvider";
