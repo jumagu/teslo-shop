@@ -1,45 +1,35 @@
-import { useRouter } from "next/navigation";
-
-import { useUiStore } from "@/store";
+import { forwardRef } from "react";
 
 interface Props {
   visible: boolean;
-  suggesterItems: string[];
-
-  isOnSideBar?: boolean;
+  suggestions: string[];
+  onClickSuggestion: (item: string) => void;
 }
 
-export const SearchSuggestions = ({
-  visible,
-  suggesterItems,
-  isOnSideBar,
-}: Props) => {
-  const router = useRouter();
+export const SearchSuggestions = forwardRef<HTMLDivElement, Props>(
+  (props, ref) => {
+    SearchSuggestions.displayName = "SearchSuggestions";
 
-  const closeSideBarMenu = useUiStore((state) => state.closeSideBarMenu);
+    const { visible, suggestions, onClickSuggestion } = props;
 
-  const handleClick = (item: string) => {
-    router.push(`/search?searchTerm=${item}`);
+    if (!visible || suggestions.length <= 0) return null;
 
-    if (isOnSideBar) {
-      closeSideBarMenu();
-    }
-  };
-
-  if (visible && suggesterItems.length > 0)
     return (
       <ul className="w-full mt-2 py-2 bg-white shadow-lg absolute z-[1] list-none">
-        {suggesterItems.map((item, index) => (
-          <li
-            key={index}
-            className="w-full py-1.5 px-[21px] leading-[20px] hover:bg-gray-100 hover:cursor-pointer"
-            onClickCapture={() => handleClick(item)}
-          >
-            <span className="text-gray-600 text-[11.5px] font-normal leading-[24px] tracking-[1.8px]">
-              {item}
-            </span>
-          </li>
-        ))}
+        <div ref={ref}>
+          {suggestions.map((item, index) => (
+            <li
+              key={index}
+              className="w-full py-1.5 px-[21px] leading-[20px] hover:bg-gray-100 hover:cursor-pointer"
+              onClick={() => onClickSuggestion(item)}
+            >
+              <span className="text-gray-600 text-[11.5px] font-normal leading-[24px] tracking-[1.8px]">
+                {item}
+              </span>
+            </li>
+          ))}
+        </div>
       </ul>
     );
-};
+  }
+);
