@@ -1,5 +1,14 @@
-import { useEffect, useState } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  type ChangeEvent,
+  type KeyboardEvent,
+} from "react";
 
+import { useRouter } from "next/navigation";
+
+import { useUiStore } from "@/store";
 import { getSuggestedProducts } from "@/actions";
 
 import { SearchInput } from "./SearchInput";
@@ -10,36 +19,116 @@ interface Props {
 }
 
 export const Search = ({ isOnSideBar }: Props) => {
-  const [searchValue, setSearchValue] = useState("");
-  const [suggesterItems, setSuggesterItems] = useState<string[]>([]);
-  const [suggestionsVisivility, setSuggestionsVisivility] = useState(false);
+  const router = useRouter();
+
+  const closeSideBarMenu = useUiStore((state) => state.closeSideBarMenu);
+
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const [touched, setTouched] = useState(false);
+  const [inputOpen, setInputOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestionsVisible, setSuggestionsVisible] = useState(false);
 
   const getSuggestedItems = async () => {
-    const suggesterItems = await getSuggestedProducts(searchValue);
-    setSuggesterItems(suggesterItems);
-  };
-
-  useEffect(() => {
-    if (searchValue.length > 2) {
-      getSuggestedItems();
+    if (searchTerm.trim().length <= 1) {
+      setSuggestions([]);
       return;
     }
 
-    setSuggesterItems([]);
-  }, [searchValue]);
+    const suggesterItems = await getSuggestedProducts(searchTerm);
+    setSuggestions(suggesterItems);
+  };
+
+  // ? Search bar event handlers
+  const handleClick = () => {
+    setInputOpen(true);
+    setSuggestionsVisible(true);
+    searchInputRef.current?.focus();
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter") return;
+
+    router.push(`/search?searchTerm=${searchTerm}`);
+
+    if (isOnSideBar) {
+      closeSideBarMenu();
+    }
+
+    searchInputRef.current?.blur();
+  };
+
+  const handleBlur = () => {
+    setTouched(true);
+
+    if (searchTerm.length === 0 && touched) {
+      setTouched(false);
+      setInputOpen(false);
+    }
+  };
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleClickClearBtn = () => {
+    setSearchTerm("");
+    setSuggestions([]);
+  };
+
+  // ? Suggestions list event handlers
+  const handleClickSuggestion = (item: string) => {
+    router.push(`/search?searchTerm=${item}`);
+
+    if (isOnSideBar) {
+      closeSideBarMenu();
+    }
+
+    setSuggestionsVisible(false);
+  };
+
+  // ? Effects
+  useEffect(() => {
+    getSuggestedItems();
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target as Node)
+      ) {
+        setSuggestionsVisible(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="relative">
+    <div className="relative group" role="search">
       <SearchInput
-        value={searchValue}
-        setValue={setSearchValue}
-        setSuggestionsVisivility={setSuggestionsVisivility}
+        ref={searchInputRef}
+        open={inputOpen}
+        value={searchTerm}
+        onBlur={handleBlur}
+        onClick={handleClick}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
         isOnSideBar={isOnSideBar}
+        onClickClearBtn={handleClickClearBtn}
       />
       <SearchSuggestions
-        visible={suggestionsVisivility}
-        suggesterItems={suggesterItems}
-        isOnSideBar={isOnSideBar}
+        ref={suggestionsRef}
+        visible={suggestionsVisible}
+        suggestions={suggestions}
+        onClickSuggestion={handleClickSuggestion}
       />
     </div>
   );
