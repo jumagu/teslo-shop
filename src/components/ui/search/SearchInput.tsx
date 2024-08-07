@@ -1,88 +1,50 @@
-import { useRef, useState, type KeyboardEvent } from "react";
-
-import { useRouter } from "next/navigation";
+import {
+  forwardRef,
+  type MouseEvent,
+  type FocusEvent,
+  type ChangeEvent,
+  type KeyboardEvent,
+} from "react";
 
 import clsx from "clsx";
-
 import { IoIosSearch } from "react-icons/io";
+
 import { CloseIcon } from "../icons/CloseIcon";
 
-import { useUiStore } from "@/store";
-
 interface Props {
-  value: string;
-  setValue: (value: string) => void;
-  setSuggestionsVisivility: (value: boolean) => void;
-
+  open: boolean;
+  value?: string;
   isOnSideBar?: boolean;
+
+  onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
+  onClickClearBtn?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-export const SearchInput = ({
-  value,
-  setValue,
-  setSuggestionsVisivility,
-  isOnSideBar,
-}: Props) => {
-  const router = useRouter();
+export const SearchInput = forwardRef<HTMLInputElement, Props>((props, ref) => {
+  SearchInput.displayName = "SearchInput";
 
-  const closeSideBarMenu = useUiStore((state) => state.closeSideBarMenu);
-
-  const [touched, setTouched] = useState(false);
-  const [focused, setFocused] = useState(false);
-  const [inputOpen, setInputOpen] = useState(false);
-
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      router.push(`/search?searchTerm=${value}`);
-
-      if (isOnSideBar) {
-        closeSideBarMenu();
-      }
-    }
-  };
-
-  const handleSearchBarBehavior = () => {
-    setInputOpen(true);
-    searchInputRef.current?.focus();
-    setFocused(true);
-  };
-
-  const handleInputFocus = () => {
-    setFocused(true);
-    setSuggestionsVisivility(true);
-  };
-
-  const handleInputBlur = () => {
-    setFocused(false);
-
-    setTimeout(() => {
-      setSuggestionsVisivility(false);
-    }, 90);
-
-    if (value.length > 0) return;
-
-    if (!touched) {
-      setTouched(true);
-      return;
-    }
-
-    if (touched) {
-      setInputOpen(false);
-      setTouched(false);
-    }
-  };
+  const {
+    open,
+    value,
+    onBlur,
+    onClick,
+    onChange,
+    onKeyDown,
+    isOnSideBar,
+    onClickClearBtn,
+  } = props;
 
   return (
     <div
       className={clsx({
         "search-input": !isOnSideBar,
-        "search-input-mobile": isOnSideBar,
-        open: inputOpen,
-        focused: focused,
+        "search-input-mobile": !!isOnSideBar,
+        open,
       })}
-      onClick={handleSearchBarBehavior}
+      onClick={onClick}
     >
       <div className="flex items-center pe-1 py-1">
         <IoIosSearch
@@ -92,21 +54,20 @@ export const SearchInput = ({
       </div>
 
       <input
-        ref={searchInputRef}
-        type="search"
+        ref={ref}
         value={value}
+        type="search"
         autoComplete="off"
         aria-label="Search"
         placeholder="Search"
-        onChange={(event) => setValue(event.target.value)}
-        onFocus={handleInputFocus}
-        onBlur={handleInputBlur}
-        onKeyDown={handleKeyDown}
+        onBlur={onBlur}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
         className={clsx(
           "w-full font-medium text-[11.5px] bg-inherit border-none uppercase appearance-none focus:outline-none transition-opacity duration-[0.33s]",
           {
-            "opacity-0": !inputOpen && !isOnSideBar,
-            "opacity-100": inputOpen && isOnSideBar,
+            "opacity-0": !open && !isOnSideBar,
+            "opacity-100": open && isOnSideBar,
           }
         )}
       />
@@ -115,19 +76,18 @@ export const SearchInput = ({
         className={clsx(
           "w-auto flex ps-1 py-1 transition-all duration-[0.33s]",
           {
-            "visible opacity-100": value.length > 0,
-            "invisible opacity-0": !value.length,
+            "invisible opacity-0": !value?.length,
           }
         )}
       >
         <button
           type="button"
           className="search-input-cancel-button"
-          onClick={() => setValue("")}
+          onClick={onClickClearBtn}
         >
           <CloseIcon className="min-w-4 min-h-4 text-gray-600 hover:text-black transition-colors duration-[0.33s]" />
         </button>
       </div>
     </div>
   );
-};
+});
