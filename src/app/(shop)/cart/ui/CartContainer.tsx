@@ -18,5 +18,5 @@ export const CartContainer = () => {
 
   if (!loaded) return <></>;
 
-  return <>{totalItemsInCart < 1 ? <EmptyCart /> : <FilledCart />}</>;
+  return totalItemsInCart < 1 ? <EmptyCart /> : <FilledCart />;
 };
