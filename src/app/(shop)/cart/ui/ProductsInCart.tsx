@@ -5,17 +5,15 @@ import { currencyFormatter } from "@/utils";
 const availableQuantities: number[] = [1, 2, 3, 4, 5];
 
 export const ProductsInCart = () => {
-  const productsInCart = useCartStore((state) => state.cart);
-  const updateProductQuantity = useCartStore(
-    (state) => state.updateProductQuantity
-  );
-  const removeProductFromCart = useCartStore(
-    (state) => state.removeProductFromCart
-  );
+  const {
+    cart,
+    updateProductQuantity,
+    removeProductFromCart,
+  } = useCartStore((state) => state);
 
   return (
     <div className="flex flex-col mt-4 min-[600px]:mt-10 gap-4 min-[600px]:gap-10 xm:gap-12 max-w-none xm:max-w-[546px]">
-      {productsInCart.map((product) => (
+      {cart.map((product) => (
         <div className="flex gap-6" key={`${product.slug}-${product.size}`}>
           <div className="basis-[100%] sm:basis-0 flex-1 max-w-max min-w-max">
             <ProductImage
