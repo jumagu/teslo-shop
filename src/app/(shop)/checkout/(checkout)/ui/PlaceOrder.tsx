@@ -11,12 +11,8 @@ import { ButtonPrimary, ErrorMessage } from "@/components";
 export const PlaceOrder = () => {
   const router = useRouter();
 
-  const cart = useCartStore((state) => state.cart);
-  const clearCart = useCartStore((state) => state.clearCart);
-  const { totalItems, subTotal, tax, totalDue } = useCartStore((state) =>
-    state.getSummaryInformation()
-  );
-
+  const { cart, clearCart, getSummaryInformation } = useCartStore((state) => state);
+  const { totalItems, subTotal, tax, totalDue } = getSummaryInformation();
   const address = useAddressStore((state) => state.address);
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -52,7 +48,12 @@ export const PlaceOrder = () => {
         Order summary ({totalItems} {totalItems === 1 ? "Item" : "Items"})
       </h2>
 
-      {errorMessage && <ErrorMessage message={errorMessage} className="items-center xm:items-start mb-6 xm:mb-0 xm:mt-4" />}
+      {errorMessage && (
+        <ErrorMessage
+          message={errorMessage}
+          className="items-center xm:items-start mb-6 xm:mb-0 xm:mt-4"
+        />
+      )}
 
       <div className="flex flex-col mb-6 xm:mt-6">
         <div className="flex justify-between mb-[5px]">
@@ -67,22 +68,22 @@ export const PlaceOrder = () => {
           </Link>
         </div>
 
-        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case">
+        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case truncate">
           {address.firstName} {address.lastName}
         </span>
-        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case">
+        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case truncate">
           {address.address}
         </span>
-        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case">
+        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case truncate">
           {address.addressLineTwo}
         </span>
-        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case">
+        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case truncate">
           {address.city} {address.zipCode}
         </span>
-        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case">
+        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case truncate">
           {address.country}
         </span>
-        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case">
+        <span className="font-medium text-[15px] leading-[20px] tracking-normal normal-case truncate">
           {address.mobilePhoneNumber}
         </span>
       </div>

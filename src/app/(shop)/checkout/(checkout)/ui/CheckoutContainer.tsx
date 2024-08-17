@@ -19,26 +19,25 @@ export const CheckoutContainer = () => {
 
   if (!loaded) return <></>;
 
+  if (totalItemsInCart < 1 || !address.firstName)
+    return (
+      <p className="font-normal mt-6 mx:mt-10 text-[12px] leading-[24px] tracking-[1.8px] fade-in">
+        Please complete the previous steps to complete the order
+      </p>
+    );
+
   return (
     <>
-      {totalItemsInCart < 1 || !address.firstName ? (
-        <p className="font-normal mt-6 mx:mt-10 text-[12px] leading-[24px] tracking-[1.8px]">
-          Please complete the previous steps to complete the order
-        </p>
-      ) : (
-        <>
-          <div className="font-normal text-gray-600 text-[12px] leading-[44px] tracking-[1.8px] xm:hidden">
-            Order Summary ({totalItemsInCart}{" "}
-            {totalItemsInCart === 1 ? "Item" : "Items"})
-          </div>
+      <div className="font-normal text-gray-600 text-[12px] leading-[44px] tracking-[1.8px] xm:hidden">
+        Order Summary ({totalItemsInCart}{" "}
+        {totalItemsInCart === 1 ? "Item" : "Items"})
+      </div>
 
-          <div className="grid grid-cols-1 xm:grid-cols-2 gap-8 xm:gap-6">
-            <ProductsToOrder />
+      <div className="grid grid-cols-1 xm:grid-cols-2 gap-8 xm:gap-6 fade-in">
+        <ProductsToOrder />
 
-            <PlaceOrder />
-          </div>
-        </>
-      )}
+        <PlaceOrder />
+      </div>
     </>
   );
 };
