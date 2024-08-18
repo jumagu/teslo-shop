@@ -15,7 +15,7 @@ export const SearchSuggestions = forwardRef<HTMLDivElement, Props>(
     if (!visible || suggestions.length <= 0) return null;
 
     return (
-      <ul className="w-full mt-2 py-2 bg-white shadow-lg absolute z-[1] list-none">
+      <ul className="w-full mt-2 py-2 bg-white shadow-lg absolute z-[1] list-none rounded">
         <div ref={ref}>
           {suggestions.map((item, index) => (
             <li
