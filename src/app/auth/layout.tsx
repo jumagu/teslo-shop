@@ -16,9 +16,9 @@ export default async function AuthLayout({
     <main>
       <TopMenu isOnAuth />
 
-      <div className="min-h-[calc(100vh-196px)] min-[600px]:min-h-[calc(100vh-124px)]">
+      <main className="min-h-[calc(100vh-196px)] min-[600px]:min-h-[calc(100vh-124px)]">
         {children}
-      </div>
+      </main>
 
       <Footer label="Contact" />
     </main>

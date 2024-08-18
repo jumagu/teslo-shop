@@ -11,9 +11,9 @@ export default function ShopLayout({
 
       <SideBar />
 
-      <div className="min-h-[calc(100vh-128px)] min-[600px]:min-h-[calc(100vh-92px)]">
+      <main className="min-h-[calc(100vh-128px)] min-[600px]:min-h-[calc(100vh-92px)]">
         {children}
-      </div>
+      </main>
 
       <Footer label="Locations" />
     </main>
