@@ -52,7 +52,7 @@ export const SideBar = () => {
   );
 
   const signButton = !isAuthenticated ? (
-    <SideBarItem path="/auth/login" name="Sign In" />
+    <SideBarItem path="/auth/login" name="Sign In" onClick={closeSideBarMenu} />
   ) : (
     <SideBarItem variant="button" name="Sign Out" onClick={signOut} />
   );
