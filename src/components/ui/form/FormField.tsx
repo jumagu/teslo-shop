@@ -10,6 +10,7 @@ export const FormField = ({
   label,
   options,
   disabled,
+  className,
   validations,
   placeholder,
   variant = "input",
@@ -22,6 +23,7 @@ export const FormField = ({
         name={name}
         label={label}
         disabled={disabled}
+        className={className}
         placeholder={placeholder}
         validations={validations}
         errorVariant={errorVariant}
@@ -35,10 +37,22 @@ export const FormField = ({
         label={label}
         options={options}
         disabled={disabled}
+        className={className}
         validations={validations}
         errorVariant={errorVariant}
       />
     );
 
-  if (variant === "textarea") return <Textarea />;
+  if (variant === "textarea")
+    return (
+      <Textarea
+        name={name}
+        label={label}
+        disabled={disabled}
+        className={className}
+        placeholder={placeholder}
+        validations={validations}
+        errorVariant={errorVariant}
+      />
+    );
 };
