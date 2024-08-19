@@ -3,45 +3,38 @@
 import { useRouter } from "next/navigation";
 
 import clsx from "clsx";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
-import { ButtonPrimary, ProductImage } from "@/components";
 import { createUpdateProduct, deleteProductImage } from "@/actions";
 import { Product, ProductImage as ProductWithImage } from "@/interfaces";
+import {
+  Form,
+  FormField,
+  ProductImage,
+  ErrorFeedback,
+  ButtonPrimary,
+} from "@/components";
+import {
+  ProductFormInputs,
+  productFormFields,
+} from "@/schemas/product-form.schemas";
 
 interface Props {
   product: Partial<Product> & { ProductImage?: ProductWithImage[] };
   categories: { id: string; name: string }[];
 }
 
-const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
-
-type FormInputs = {
-  title: string;
-  slug: string;
-  description: string;
-  price: number;
-  inStock: number;
-  gender: "men" | "women" | "kids" | "unisex";
-  categoryId: string;
-  tags: string;
-  sizes: string[];
-  images: FileList;
-};
+const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 
 export const ProductForm = ({ product, categories }: Props) => {
   const router = useRouter();
 
-  const {
-    watch,
-    register,
-    setValue,
-    setError,
-    getValues,
-    clearErrors,
-    handleSubmit,
-    formState: { errors, isSubmitting, isLoading },
-  } = useForm<FormInputs>({
+  productFormFields[6].options = categories.map(({ id, name }) => ({
+    name,
+    value: id,
+  }));
+
+  const methods = useForm<ProductFormInputs>({
     mode: "onTouched",
     defaultValues: {
       ...product,
@@ -50,6 +43,16 @@ export const ProductForm = ({ product, categories }: Props) => {
       images: undefined,
     },
   });
+
+  const {
+    watch,
+    register,
+    setValue,
+    setError,
+    getValues,
+    clearErrors,
+    formState: { errors, isSubmitting, isLoading },
+  } = methods;
 
   // ? Pending changes (in sizes) to render the form again.
   watch("sizes");
@@ -71,7 +74,7 @@ export const ProductForm = ({ product, categories }: Props) => {
     }
   };
 
-  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+  const onSubmit = async (data: ProductFormInputs) => {
     const formData = new FormData();
 
     const { images, ...productToSave } = data;
@@ -97,7 +100,6 @@ export const ProductForm = ({ product, categories }: Props) => {
     const { ok, product: updatedProduct } = await createUpdateProduct(formData);
 
     if (!ok) {
-      // ! sweetalert
       alert("Unable to update the product");
       return;
     }
@@ -106,208 +108,33 @@ export const ProductForm = ({ product, categories }: Props) => {
   };
 
   return (
-    <form
+    <Form
+      methods={methods}
+      onSubmit={onSubmit}
       className="max-w-[850px] grid grid-cols-1 sm:grid-cols-2 gap-6"
-      onSubmit={handleSubmit(onSubmit)}
     >
-      <label className="group">
-        <span className="input-label">Title</span>
-        <input
-          className={clsx("input-primary", {
-            error: !!errors.title,
-          })}
-          aria-invalid={!!errors.title}
-          type="text"
-          {...register("title", {
-            required: {
-              value: true,
-              message: "Please populate this field - Title",
-            },
-          })}
-        />
-        {errors.title && (
-          <p className="input-error-alert-product" role="alert">
-            {errors.title.message}
-          </p>
-        )}
-      </label>
+      {productFormFields.map(
+        ({ name, type, label, options, variant, className, validations }) => (
+          <FormField
+            key={name}
+            name={name}
+            type={type}
+            label={label}
+            variant={variant}
+            options={options}
+            className={className}
+            disabled={isSubmitting}
+            validations={validations}
+            errorVariant="sm"
+          />
+        )
+      )}
 
-      <label className="group">
-        <span className="input-label">Slug</span>
-        <input
-          className={clsx("input-primary", {
-            error: !!errors.slug,
-          })}
-          aria-invalid={!!errors.slug}
-          type="text"
-          {...register("slug", {
-            required: {
-              value: true,
-              message: "Please populate this field - Slug",
-            },
-          })}
-        />
-        {errors.slug && (
-          <p className="input-error-alert-product" role="alert">
-            {errors.slug.message}
-          </p>
-        )}
-      </label>
-
-      <label className="sm:col-span-2 group">
-        <span className="input-label">Description</span>
-        <textarea
-          className={clsx("input-primary__textarea", {
-            error: !!errors.description,
-          })}
-          aria-invalid={!!errors.description}
-          {...register("description", {
-            required: {
-              value: true,
-              message: "Please populate this field - Description",
-            },
-          })}
-        />
-        {errors.description && (
-          <p className="input-error-alert-product" role="alert">
-            {errors.description.message}
-          </p>
-        )}
-      </label>
-
-      <label className="group">
-        <span className="input-label">Price</span>
-        <input
-          className={clsx("input-primary", {
-            error: !!errors.price,
-          })}
-          aria-invalid={!!errors.price}
-          type="number"
-          {...register("price", {
-            required: {
-              value: true,
-              message: "Please populate this field - Price",
-            },
-            min: {
-              value: 0,
-              message: "Please populate this field with a valid price",
-            },
-          })}
-        />
-        {errors.price && (
-          <p className="input-error-alert-product" role="alert">
-            {errors.price.message}
-          </p>
-        )}
-      </label>
-
-      <label className="group">
-        <span className="input-label">Stock</span>
-        <input
-          className={clsx("input-primary", {
-            error: !!errors.inStock,
-          })}
-          aria-invalid={!!errors.inStock}
-          type="number"
-          {...register("inStock", {
-            required: {
-              value: true,
-              message: "Please populate this field - Stock",
-            },
-            min: {
-              value: 0,
-              message: "Please populate this field with a valid stock number",
-            },
-          })}
-        />
-        {errors.inStock && (
-          <p className="input-error-alert-address" role="alert">
-            {errors.inStock.message}
-          </p>
-        )}
-      </label>
-
-      <label className="group">
-        <span className="input-label">Gender</span>
-        <select
-          className={clsx("input-primary !bg-white", {
-            error: !!errors.gender,
-          })}
-          aria-invalid={!!errors.gender}
-          {...register("gender", {
-            required: {
-              value: true,
-              message: "Please populate this field - Gender",
-            },
-          })}
-        >
-          <option value="">Select Gender</option>
-          <option value="men">Men</option>
-          <option value="women">Women</option>
-          <option value="kid">Kid</option>
-          <option value="unisex">Unisex</option>
-        </select>
-        {errors.gender && (
-          <p className="input-error-alert-address" role="alert">
-            {errors.gender.message}
-          </p>
-        )}
-      </label>
-
-      <label className="group">
-        <span className="input-label">Category</span>
-        <select
-          className={clsx("input-primary !bg-white", {
-            error: !!errors.categoryId,
-          })}
-          aria-invalid={!!errors.categoryId}
-          {...register("categoryId", {
-            required: {
-              value: true,
-              message: "Please populate this field - Category",
-            },
-          })}
-        >
-          <option value="">Select Category</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-        {errors.categoryId && (
-          <p className="input-error-alert-address" role="alert">
-            {errors.categoryId.message}
-          </p>
-        )}
-      </label>
-
-      <label className="group">
-        <span className="input-label">Tags</span>
-        <input
-          className={clsx("input-primary", {
-            error: !!errors.tags,
-          })}
-          aria-invalid={!!errors.tags}
-          type="text"
-          {...register("tags", {
-            required: {
-              value: true,
-              message: "Please populate this field - Tags",
-            },
-          })}
-        />
-        {errors.tags && (
-          <p className="input-error-alert-address" role="alert">
-            {errors.tags.message}
-          </p>
-        )}
-      </label>
-
-      <label>
+      <div className="group">
         <span className="input-label">Sizes</span>
         <div
           className="flex justify-between mt-2"
+          aria-describedby="sizes-error"
           {...register("sizes", {
             required: {
               value: true,
@@ -315,7 +142,7 @@ export const ProductForm = ({ product, categories }: Props) => {
             },
           })}
         >
-          {sizes.map((size) => (
+          {SIZES.map((size) => (
             <div
               key={size}
               className={clsx(
@@ -332,15 +159,15 @@ export const ProductForm = ({ product, categories }: Props) => {
             </div>
           ))}
         </div>
-        {errors.sizes && (
-          <p className="input-error-alert-address" role="alert">
-            {errors.sizes.message}
-          </p>
-        )}
-      </label>
+        <ErrorFeedback
+          id="sizes-error"
+          varaint="sm"
+          message={errors.sizes?.message}
+        />
+      </div>
 
-      <label className="sm:col-span-2 group">
-        <span className="input-label">Images</span>
+      <div className="group sm:col-span-2">
+        <label className="input-label">Images</label>
         <input
           className={clsx("input-primary", {
             error: !!errors.images,
@@ -348,6 +175,7 @@ export const ProductForm = ({ product, categories }: Props) => {
           multiple
           type="file"
           aria-invalid={!!errors.images}
+          aria-describedby="images-error"
           accept="image/png, image/jpeg, image/avif"
           {...register("images", {
             required: {
@@ -356,12 +184,12 @@ export const ProductForm = ({ product, categories }: Props) => {
             },
           })}
         />
-        {errors.images && (
-          <p className="input-error-alert-address" role="alert">
-            {errors.images.message}
-          </p>
-        )}
-      </label>
+        <ErrorFeedback
+          id="images-error"
+          varaint="sm"
+          message={errors.images?.message}
+        />
+      </div>
 
       <div className="flex gap-2 sm:col-span-2">
         {product.ProductImage?.map((img) => (
@@ -392,6 +220,6 @@ export const ProductForm = ({ product, categories }: Props) => {
           disabled={isSubmitting || isLoading}
         />
       </div>
-    </form>
+    </Form>
   );
 };
