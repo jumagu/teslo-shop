@@ -12,48 +12,9 @@ export const authConfig: NextAuthConfig = {
     newUser: "/auth/new-account",
   },
 
-  callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-
-      const isOnCheckout = nextUrl.pathname.startsWith("/checkout");
-      const isOnAdmin = nextUrl.pathname.startsWith("/admin");
-
-      if (isOnAdmin) {
-        if (isLoggedIn && auth.user.role === "admin") return true;
-        return false;
-      } else if (isLoggedIn) {
-        return true;
-      }
-
-      if (isOnCheckout) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      } else if (isLoggedIn) {
-        return true;
-      }
-
-      return true;
-    },
-
-    jwt({ token, user }) {
-      if (user) {
-        token.data = user;
-      }
-
-      return token;
-    },
-
-    session({ session, token, user }) {
-      session.user = token.data as any;
-
-      return session;
-    },
-  },
-
   providers: [
     Credentials({
-      async authorize(credentials) {
+      authorize: async (credentials) => {
         const parsedCredentials = z
           .object({ email: z.string().email(), password: z.string().min(6) })
           .safeParse(credentials);
@@ -78,6 +39,45 @@ export const authConfig: NextAuthConfig = {
       },
     }),
   ],
+
+  callbacks: {
+    authorized: ({ auth, request: { nextUrl } }) => {
+      const isLoggedIn = !!auth?.user;
+
+      const isOnCheckout = nextUrl.pathname.startsWith("/checkout");
+      const isOnAdmin = nextUrl.pathname.startsWith("/admin");
+
+      if (isOnAdmin) {
+        if (isLoggedIn && auth.user.role === "admin") return true;
+        return false;
+      } else if (isLoggedIn) {
+        return true;
+      }
+
+      if (isOnCheckout) {
+        if (isLoggedIn) return true;
+        return false; // Redirect unauthenticated users to login page
+      } else if (isLoggedIn) {
+        return true;
+      }
+
+      return true;
+    },
+
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.data = user;
+      }
+
+      return token;
+    },
+
+    session: ({ session, token }) => {
+      session.user = token.data as any;
+
+      return session;
+    },
+  },
 };
 
 export const { signIn, signOut, auth, handlers } = NextAuth(authConfig);
