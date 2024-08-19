@@ -2,9 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  scroll-behavior: smooth;
+}
+
 :root {
   --primary: #274494;
   --foreground-rgb: 0, 0, 0;
+  --animate-duration: 1s;
+  --tds-bezier: cubic-bezier(0.5, 0, 0, 0.75);
 }
 
 body {
@@ -20,6 +26,8 @@ input[type="search"]::-webkit-search-cancel-button {
 input[type="search"]::-moz-search-cancel-button {
   display: none;
 }
+
+/* ? ******************************************** Keyframes ****************************************/
 
 @keyframes fadeIn {
   0% {
@@ -39,6 +47,107 @@ input[type="search"]::-moz-search-cancel-button {
   }
 }
 
+@keyframes bounce {
+  50% {
+    transform: scale(1.2);
+  }
+  75% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@-webkit-keyframes bounce {
+  50% {
+    -webkit-transform: scale(1.2);
+    transform: scale(1.2);
+  }
+  75% {
+    -webkit-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
+
+@keyframes headShake {
+  0% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+
+  6.5% {
+    -webkit-transform: translateX(-6px) rotateY(-9deg);
+    transform: translateX(-6px) rotateY(-9deg);
+  }
+
+  18.5% {
+    -webkit-transform: translateX(5px) rotateY(7deg);
+    transform: translateX(5px) rotateY(7deg);
+  }
+
+  31.5% {
+    -webkit-transform: translateX(-3px) rotateY(-5deg);
+    transform: translateX(-3px) rotateY(-5deg);
+  }
+
+  43.5% {
+    -webkit-transform: translateX(2px) rotateY(3deg);
+    transform: translateX(2px) rotateY(3deg);
+  }
+
+  50% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
+
+@-webkit-keyframes headShake {
+  0% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+
+  6.5% {
+    -webkit-transform: translateX(-6px) rotateY(-9deg);
+    transform: translateX(-6px) rotateY(-9deg);
+  }
+
+  18.5% {
+    -webkit-transform: translateX(5px) rotateY(7deg);
+    transform: translateX(5px) rotateY(7deg);
+  }
+
+  31.5% {
+    -webkit-transform: translateX(-3px) rotateY(-5deg);
+    transform: translateX(-3px) rotateY(-5deg);
+  }
+
+  43.5% {
+    -webkit-transform: translateX(2px) rotateY(3deg);
+    transform: translateX(2px) rotateY(3deg);
+  }
+
+  50% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
+
+/* ? ******************************************** Animations ****************************************/
+.animate {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-duration: var(--animate-duration);
+  animation-duration: var(--animate-duration);
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
 .fade-in {
   -webkit-animation-duration: 0.5s;
   animation-duration: 0.5s;
@@ -47,6 +156,13 @@ input[type="search"]::-moz-search-cancel-button {
 
   -webkit-animation-name: fadeIn;
   animation-name: fadeIn;
+}
+
+.head-shake {
+  -webkit-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
+  -webkit-animation-name: headShake;
+  animation-name: headShake;
 }
 
 .checkbox {
@@ -113,17 +229,43 @@ input[type="search"]::-moz-search-cancel-button {
     }
   }
 }
+/* ? ******************************************** SideBar ****************************************/
+.sidebar-dialog {
+  @apply fixed m-0 px-8 left-auto right-0 top-0 bottom-0 w-[414px] max-w-[calc(100vw-48px)] h-screen max-h-screen bg-white z-[100] overflow-auto overscroll-contain;
+  block-size: 100dvh;
+  max-block-size: 100dvh;
+}
 
-@keyframes bounce {
-  50% {
-    transform: scale(1.2);
-  }
-  75% {
-    transform: scale(0.9);
-  }
-  100% {
-    transform: scale(1);
-  }
+.sidebar-dialog:not(.open) {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transform: translateX(50%) translateY(0);
+  transition: opacity 0.5s var(--tds-bezier), transform 0.5s var(--tds-bezier),
+    visibility 0s 0.5s;
+}
+
+.sidebar-dialog.open {
+  opacity: 1;
+  pointer-events: inherit;
+  visibility: inherit;
+  transform: translateX(0) translateY(0);
+  transition: opacity 0.5s var(--tds-bezier), transform 0.5s var(--tds-bezier),
+    visibility 0s 0s;
+}
+
+.backdrop {
+  @apply fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vh] bg-black;
+  transition: background-color 0.5s ease, backdrop-filter 0.5s ease,
+    -webkit-backdrop-filter 0.5s ease;
+}
+
+.backdrop:not(.visible) {
+  @apply bg-opacity-0 pointer-events-none backdrop-blur-none;
+}
+
+.backdrop.visible {
+  @apply bg-opacity-30 pointer-events-auto backdrop-blur-sm;
 }
 
 /* ? ******************************************** Buttons ****************************************/
@@ -145,40 +287,37 @@ input[type="search"]::-moz-search-cancel-button {
 
 .btn-remove-item {
   @apply uppercase font-normal text-[13px] leading-[24px] tracking-[1.8px] z-10 text-gray-700 shadow-[0px_1px_0px_0px_currentColor] hover:shadow-[0px_2px_0px_0px_currentColor] hover:text-gray-500 hover:opacity-85 active:text-black active:opacity-[unset];
-  transition: box-shadow 0.33s cubic-bezier(0.5, 0, 0, 0.75), color 0.33s ease,
+  transition: box-shadow 0.33s var(--tds-bezier), color 0.33s ease,
     opacity 0.33s ease;
 }
 
 /* ? ******************************************** Inputs ****************************************/
 .input-primary {
-  @apply w-full h-[46px] py-[10px] px-3 mt-2 text-gray-600 font-medium text-[13px] leading-[26px] tracking-[1.8px] border border-solid border-gray-300 outline-none focus:border-gray-600 transition-all duration-500 uppercase;
-}
-
-.input-primary.error {
-  @apply border-red-500 focus:border-gray-600;
-}
-
-.input-label {
-  @apply font-medium text-[13px] leading-[26px] tracking-[1.8px] text-gray-500 group-has-[:focus]:text-black transition-all duration-[.33s];
-}
-
-.input-error-alert-auth {
-  @apply mt-2 text-[13px] text-red-500 font-medium leading-[26px] tracking-[1.8px];
-}
-
-.input-error-alert-address {
-  @apply mt-2 text-[11px] text-red-500 font-medium leading-[26px] tracking-[1.8px];
-}
-
-.input-error-alert-product {
-  @apply mt-2 text-[11px] text-red-500 font-medium leading-[26px] tracking-[1.8px];
+  @apply w-full h-[46px] py-[10px] px-3 mt-2 text-gray-600 font-medium text-[13px] leading-[26px] tracking-[1.8px] border border-solid border-gray-300 outline-none focus:border-gray-600 disabled:text-gray-400 transition-colors duration-[.33s] uppercase;
 }
 
 .input-primary__textarea {
-  @apply w-full min-h-[46px] max-h-[184px] h-[92px] py-[10px] px-3 mt-2 text-gray-600 font-medium text-[13px] leading-[26px] tracking-[1.8px] border border-gray-300 outline-none focus:border-gray-600 transition-colors duration-500 uppercase;
+  @apply w-full min-h-[46px] max-h-[184px] h-[92px] py-[10px] px-3 mt-2 text-gray-600 font-medium text-[13px] leading-[26px] tracking-[1.8px] border border-gray-300 outline-none focus:border-gray-600 disabled:text-gray-400 transition-colors duration-[.33s] uppercase;
 }
 
-.input-primary__textarea.error {
+.input-label {
+  @apply font-medium text-[13px] leading-[26px] tracking-[1.8px] text-gray-500 group-has-[:focus]:text-black transition-colors duration-[.33s];
+}
+
+.input-error-alert-md,
+.input-error-alert-sm {
+  @apply mt-2 text-red-500 font-medium leading-[26px] tracking-[1.8px];
+}
+
+.input-error-alert-md {
+  @apply text-[13px];
+}
+
+.input-error-alert-sm {
+  @apply text-[11px];
+}
+
+.error {
   @apply border-red-500 focus:border-gray-600;
 }
 
@@ -212,9 +351,8 @@ input[type="search"]::-moz-search-cancel-button {
 
 .search-input {
   @apply pl-2 pr-3 w-10 h-10 shadow-[inset_0_0_0_1px_transparent] hover:cursor-pointer;
-  transition: width 0.5s cubic-bezier(0.5, 0, 0, 0.75),
-    padding 0.5s cubic-bezier(0.5, 0, 0, 0.75), background-color 0.33s ease,
-    box-shadow 0.33s ease;
+  transition: width 0.5s var(--tds-bezier), padding 0.5s var(--tds-bezier),
+    background-color 0.33s ease, box-shadow 0.33s ease;
 }
 
 .search-input-mobile {
@@ -229,5 +367,5 @@ input[type="search"]::-moz-search-cancel-button {
 .search-input-cancel-button {
   @apply inline-flex justify-center items-center w-6 h-6 p-1 -my-2 -mr-1 bg-transparent border border-solid border-transparent shadow-[inset_0_0_0_1px_transparent] hover:bg-gray-100 focus:shadow-[inset_0_0_0_1px_#4b5563];
   transition: color 0.33s ease, background-color 0.33s ease,
-    box-shadow 0.25s ease, transform 0.33s cubic-bezier(0.5, 0, 0, 0.75);
+    box-shadow 0.25s ease, transform 0.33s var(--tds-bezier);
 }
