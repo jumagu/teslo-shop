@@ -2,12 +2,14 @@ import clsx from "clsx";
 import { useFormContext } from "react-hook-form";
 
 import { Select as Props } from "@/interfaces";
+import { ErrorFeedback } from "./ErrorFeedback";
 
 export const Select = ({
   name,
   label,
   options,
   disabled,
+  className,
   validations,
   errorVariant,
 }: Props) => {
@@ -17,7 +19,7 @@ export const Select = ({
   } = useFormContext();
 
   return (
-    <div className="group">
+    <div className={clsx("group", className)}>
       <label className="input-label" htmlFor={name}>
         Select
       </label>
@@ -40,16 +42,11 @@ export const Select = ({
             </option>
           ))}
       </select>
-      {errors[name] && (
-        <p
-          id={`${name}-error`}
-          role="alert"
-          aria-live="assertive"
-          className={`input-error-alert-${errorVariant}`}
-        >
-          {(errors[name]?.message as string) ?? ""}
-        </p>
-      )}
+      <ErrorFeedback
+        id={`${name}-error`}
+        varaint={errorVariant}
+        message={errors[name]?.message as string}
+      />
     </div>
   );
 };
