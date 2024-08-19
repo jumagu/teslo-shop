@@ -2,26 +2,31 @@
 
 import { useEffect } from "react";
 
-import Link from "next/link";
-
-import { useSession } from "next-auth/react";
-
 import clsx from "clsx";
-
+import { useSession } from "next-auth/react";
 import { IoCloseOutline } from "react-icons/io5";
 
 import { logout } from "@/actions";
 import { useUiStore } from "@/store";
+import { GENDERS, ADMIN_OPTIONS, AUTHENTICATED_OPTIONS } from "@/constants";
+
 import { Search } from "../search/Search";
+import { SideBarItem } from "./SideBarItem";
 
 export const SideBar = () => {
-  const isSideBarMenuOpen = useUiStore((state) => state.isSideBarMenuOpen);
-  const closeSideBarMenu = useUiStore((state) => state.closeSideBarMenu);
+  const { isSideBarMenuOpen, closeSideBarMenu } = useUiStore((state) => state);
 
   const { data: session } = useSession();
 
   const isAuthenticated = !!session?.user;
   const isAdmin = session?.user.role === "admin";
+
+  const signOut = async () => {
+    if (!isAuthenticated) return;
+
+    await logout();
+    window.location.reload();
+  };
 
   useEffect(() => {
     isSideBarMenuOpen
@@ -29,31 +34,71 @@ export const SideBar = () => {
       : (document.body.style.overflow = "auto");
   }, [isSideBarMenuOpen]);
 
+  const genders = (
+    <>
+      <ul className="mlg:hidden" role="none">
+        {GENDERS.map(({ name, path }) => (
+          <SideBarItem
+            key={name}
+            path={path}
+            name={name}
+            onClick={closeSideBarMenu}
+          />
+        ))}
+      </ul>
+
+      <div className="w-full h-px bg-gray-200 my-4 mlg:hidden" />
+    </>
+  );
+
+  const signButton = !isAuthenticated ? (
+    <SideBarItem path="/auth/login" name="Sign In" />
+  ) : (
+    <SideBarItem variant="button" name="Sign Out" onClick={signOut} />
+  );
+
+  const authenticatedOptions = (
+    <ul role="none">
+      {isAuthenticated &&
+        AUTHENTICATED_OPTIONS.map(({ path, name }) => (
+          <SideBarItem
+            key={name}
+            path={path}
+            name={name}
+            onClick={closeSideBarMenu}
+          />
+        ))}
+      {signButton}
+    </ul>
+  );
+
+  const adminOptions =
+    isAuthenticated && isAdmin ? (
+      <>
+        <div className="w-full h-px bg-gray-200 my-4" />
+
+        <ul role="none">
+          {ADMIN_OPTIONS.map(({ path, name }) => (
+            <SideBarItem
+              key={name}
+              path={path}
+              name={name}
+              onClick={closeSideBarMenu}
+            />
+          ))}
+        </ul>
+      </>
+    ) : null;
+
   return (
-    <div>
-      {/* Background black */}
-      {isSideBarMenuOpen && (
-        <div className="fixed top-0 left-0 w-screen h-screen z-50 bg-black opacity-30 transition-all duration-300"></div>
-      )}
-
-      {/* Blur */}
-      {isSideBarMenuOpen && (
-        <div
-          className="fade-in fixed top-0 left-0 w-screen h-screen z-50 backdrop-filter backdrop-blur-sm transition-all duration-300"
-          onClick={closeSideBarMenu}
-        ></div>
-      )}
-
-      {/* SideBarMenu */}
+    <>
       <div
-        className={clsx(
-          "fixed px-8 right-0 top-0 w-[414px] max-w-[calc(100vw-48px)] h-screen bg-white z-50 transform transition-all duration-300 overflow-y-auto",
-          { "translate-x-full": !isSideBarMenuOpen }
-        )}
+        role="dialog"
+        aria-hidden={!isSideBarMenuOpen}
+        className={clsx("sidebar-dialog", { open: isSideBarMenuOpen })}
       >
-        {/* Close Button */}
-        <div className="flex flex-row-reverse mt-4 mb-6 sticky bg-white top-0 z-10">
-          <button className="hover:bg-gray-100 transition-all duration-300">
+        <div className="flex flex-row-reverse pt-4 pb-6 sticky bg-white top-0 z-10">
+          <button className="hover:bg-gray-100 transition-all duration-[.33s]">
             <IoCloseOutline
               className="text-gray-500"
               size={25.7}
@@ -62,107 +107,23 @@ export const SideBar = () => {
           </button>
         </div>
 
-        {/* Search Input */}
-        <div className="mb-2 mlg:hidden">
+        <div className="mb-6 mlg:hidden">
           <Search isOnSideBar />
         </div>
 
-        {/* Navigation list */}
-        <nav className="mt-6">
-          <div className="mlg:hidden">
-            <Link
-              className="font-medium text-[13px] leading-[24px] tracking-[1.8px] mb-2 p-2 hover:bg-gray-100 transition-all duration-300 block"
-              href="/gender/men"
-              onClick={closeSideBarMenu}
-            >
-              <span className="mx-1">Men</span>
-            </Link>
-            <Link
-              className="font-medium text-[13px] leading-[24px] tracking-[1.8px] mb-2 p-2 hover:bg-gray-100 transition-all duration-300 block"
-              href="/gender/women"
-              onClick={closeSideBarMenu}
-            >
-              <span className="mx-1">Women</span>
-            </Link>
-            <Link
-              className="font-medium text-[13px] leading-[24px] tracking-[1.8px] p-2 hover:bg-gray-100 transition-all duration-300 block"
-              href="/gender/kids"
-              onClick={closeSideBarMenu}
-            >
-              <span className="mx-1">Kids</span>
-            </Link>
+        <section>
+          {genders}
 
-            <div className="w-full h-px bg-gray-200 my-4" />
-          </div>
+          {authenticatedOptions}
 
-          {isAuthenticated && (
-            <>
-              <Link
-                className="font-medium text-[13px] leading-[24px] tracking-[1.8px] mb-2 p-2 hover:bg-gray-100 transition-all duration-300 block"
-                href="/profile"
-                onClick={closeSideBarMenu}
-              >
-                <span>Profile</span>
-              </Link>
-
-              <Link
-                className="font-medium text-[13px] leading-[24px] tracking-[1.8px] mb-2 p-2 hover:bg-gray-100 transition-all duration-300 block"
-                href="/orders"
-                onClick={closeSideBarMenu}
-              >
-                <span>Orders</span>
-              </Link>
-            </>
-          )}
-
-          {!isAuthenticated ? (
-            <Link
-              className="font-medium text-[13px] leading-[24px] tracking-[1.8px] p-2 hover:bg-gray-100 transition-all duration-300 block"
-              href="/auth/login"
-              onClick={closeSideBarMenu}
-            >
-              <span>Sign In</span>
-            </Link>
-          ) : (
-            <button
-              className="font-medium text-[13px] leading-[24px] tracking-[1.8px] p-2 hover:bg-gray-100 transition-all duration-300 text-left uppercase block w-full"
-              onClick={() => logout()}
-            >
-              <span>Sign Out</span>
-            </button>
-          )}
-
-          {isAuthenticated && isAdmin && (
-            <>
-              <div className="w-full h-px bg-gray-200 my-4" />
-
-              <Link
-                className="font-medium text-[13px] leading-[24px] tracking-[1.8px] mb-2 p-2 hover:bg-gray-100 transition-all duration-300 block"
-                href="/admin/products"
-                onClick={closeSideBarMenu}
-              >
-                <span>Products</span>
-              </Link>
-
-              <Link
-                className="font-medium text-[13px] leading-[24px] tracking-[1.8px] mb-2 p-2 hover:bg-gray-100 transition-all duration-300 block"
-                href="/admin/orders"
-                onClick={closeSideBarMenu}
-              >
-                <span>Orders</span>
-              </Link>
-
-              <Link
-                className="font-medium text-[13px] leading-[24px] tracking-[1.8px] p-2 hover:bg-gray-100 transition-all duration-300 block"
-                href="/admin/users"
-                onClick={closeSideBarMenu}
-              >
-                <span>Users</span>
-              </Link>
-            </>
-          )}
-        </nav>
+          {adminOptions}
+        </section>
       </div>
-    </div>
+
+      <div
+        onClick={closeSideBarMenu}
+        className={clsx("backdrop", { visible: isSideBarMenuOpen })}
+      ></div>
+    </>
   );
 };
