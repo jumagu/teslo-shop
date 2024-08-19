@@ -21,7 +21,7 @@ export const Select = ({
   return (
     <div className={clsx("group", className)}>
       <label className="input-label" htmlFor={name}>
-        Select
+        {label}
       </label>
       <select
         id={name}
