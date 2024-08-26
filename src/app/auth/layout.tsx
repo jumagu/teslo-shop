@@ -13,7 +13,7 @@ export default async function AuthLayout({
   if (session?.user) redirect("/");
 
   return (
-    <main>
+    <>
       <TopMenu isOnAuth />
 
       <main className="min-h-[calc(100vh-196px)] min-[600px]:min-h-[calc(100vh-124px)]">
@@ -21,6 +21,6 @@ export default async function AuthLayout({
       </main>
 
       <Footer label="Contact" />
-    </main>
+    </>
   );
 }
